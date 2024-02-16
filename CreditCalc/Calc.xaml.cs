@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CreditCalc
 {
@@ -20,20 +22,34 @@ namespace CreditCalc
         private void SliderValueChange(object sender, ValueChangedEventArgs e)
         {
             SliderLabel.Text = $"{Slider.Value}%";
+            double Loan;
+            double Month;
+            bool check = double.TryParse(LoanEntry.Text, out Loan);
+            bool check2 = double.TryParse(MonthEntry.Text, out Month);
 
-            if (LoanEntry.Text != "" && MonthEntry.Text != "")
+            if (LoanEntry.Text != "" || MonthEntry.Text != "")
             {
-                Calculation(LoanEntry.Text, MonthEntry.Text, PaymentTypePicker.SelectedIndex, Slider.Value);
+                if(check == false || check2 == false)
+                {
+                    Calculation(Loan, Month, PaymentTypePicker.SelectedIndex, Slider.Value);
+                }
+
+                else
+                {
+                    MonthlyPaymentLabel.Text = "Ежемесячный платеж: N/A";
+                    TotalLabel.Text = "Общая сумма: N/A";
+                    OverpaymentLabel.Text = "Переплата: N/A";
+                }
             }
             else
             {
-                MonthlyPaymentLabel.Text = "Ежемесячный платеж: ...";
-                TotalLabel.Text = "Общая сумма: ...";
-                OverpaymentLabel.Text = "Переплата: ...";
+                MonthlyPaymentLabel.Text = "Ежемесячный платеж: N/A";
+                TotalLabel.Text = "Общая сумма: N/A";
+                OverpaymentLabel.Text = "Переплата: N/A";
             }
         }
 
-        private void Calculation(string EntryLoanAmount, string EntryTermMonth, int PickerPayment, double Slider)
+        private void Calculation(double EntryLoanAmount, double EntryTermMonth, int PickerPayment, double Slider)
         {
             if (Convert.ToDouble(EntryTermMonth) != 0 && Convert.ToDouble(EntryLoanAmount) != 0)
             {
@@ -66,6 +82,7 @@ namespace CreditCalc
                         break;
                 }
             }
+
             else
             {
                 MonthlyPaymentLabel.Text = "Ежемесячный платеж: N/A";
